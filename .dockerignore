@@ -1,0 +1,13 @@
+.bundle
+.dockerignore
+.env
+.env.*
+.git
+log
+node_modules
+public/uploads
+public/system
+public/assets
+public/packs
+tmp
+vendor/bundle

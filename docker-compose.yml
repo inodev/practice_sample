@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8.3.0
+    ports:
+      - "3306:3306"
+    environment:
+      - "MYSQL_USER=mysql"
+      - "MYSQL_ROOT_PASSWORD=mysecretpassword1234"
+    command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
+    volumes:
+      - "mysql-data:/var/lib/mysql"
+  web: &app
+    build: .
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    tty: true
+    stdin_open: true
+    ports:
+      - "3000:3000"
+    environment:
+      - "TZ=Asia/Tokyo"
+      - "DATABASE_HOST=db"
+      - "DATABASE_PORT=3306"
+      - "RAILS_ENV=development"
+      - "NODE_ENV=development"
+      - "WEBPACKER_DEV_SERVER_HOST=webpacker"
+    env_file: .envrc
+    depends_on:
+      - db
+    volumes:
+      - .:/opt/app:cached
+      - bundle:/usr/local/bundle
+      # exclude volumes
+      - /opt/app/vendor
+      - /opt/app/tmp
+      - /opt/app/log
+      - /opt/app/.git
+
+volumes:
+  mysql-data:
+    driver: local
+  bundle:
