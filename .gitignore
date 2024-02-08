@@ -8,8 +8,8 @@
 /.bundle
 
 # Ignore all environment files (except templates).
-/.env*
-!/.env*.erb
+/.envrc
+!/.envrc*.erb
 
 # Ignore all logfiles and tempfiles.
 /log/*
