@@ -1,21 +1,27 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
-import { CdkStack } from '../lib/cdk-stack';
+import { StagingStack } from '../lib/staging-stack';
+import { ProductionStack } from '../lib/production-stack';
 
 const app = new cdk.App();
-new CdkStack(app, 'CdkStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
+const target = app.node.tryGetContext('target');
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+cdk.Tags.of(app).add('Project', 'Magareco');
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
-
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+switch (target) {
+  case "staging":
+    cdk.Tags.of(app).add('Environment', 'Staging');
+    new StagingStack(app, 'MagarecoStagingStack', {
+      env: { region: 'ap-northeast-1' },
+    });
+    break;
+  case "production":
+    cdk.Tags.of(app).add('Environment', 'Production');
+    new ProductionStack(app, 'MagarecoProductionStack', {
+      env: { region: 'ap-northeast-1' },
+    });
+    break;
+  default:
+    break;
+}
