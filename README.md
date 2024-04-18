@@ -5,6 +5,7 @@
 ```shell
 % cp .envrc.sample .envrc
 % docker-compose build
-% docker-compose exec web rails db:create
 % docker-compose up
+% docker-compose exec web rails db:create
+% docker-compose exec web rails db:migrate
 ```
