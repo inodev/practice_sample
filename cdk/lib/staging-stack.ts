@@ -1,7 +1,8 @@
 
 import * as cdk from 'aws-cdk-lib';
-import { Construct } from 'constructs';
+import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import { Construct } from 'constructs';
 
 export class StagingStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -28,5 +29,27 @@ export class StagingStack extends cdk.Stack {
         },
       ],
     });
+
+    // ECRレポジトリ
+    const appEcrRepository = new ecr.Repository(this, 'appRepository', {
+      repositoryName: "MagarecoStagingApp",
+      encryption: ecr.RepositoryEncryption.AES_256,
+      imageTagMutability: ecr.TagMutability.MUTABLE,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteImages: true
+    });
+
+    const nginxEcrRepository = new ecr.Repository(this, 'nginxRepository', {
+      repositoryName: "MagarecoStagingNginx",
+      encryption: ecr.RepositoryEncryption.AES_256,
+      imageTagMutability: ecr.TagMutability.MUTABLE,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      autoDeleteImages: true
+    });
+
+    // TODO
+    // - RDSの追加
+    // - RDSのセキュリティグループの追加
+    // - S3のバケット作成
   }
 }
