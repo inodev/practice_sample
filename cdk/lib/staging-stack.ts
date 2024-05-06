@@ -32,7 +32,7 @@ export class StagingStack extends cdk.Stack {
 
     // ECRレポジトリ
     const appEcrRepository = new ecr.Repository(this, 'appRepository', {
-      repositoryName: "MagarecoStagingApp",
+      repositoryName: "magareco-staging-app",
       encryption: ecr.RepositoryEncryption.AES_256,
       imageTagMutability: ecr.TagMutability.MUTABLE,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
@@ -40,7 +40,7 @@ export class StagingStack extends cdk.Stack {
     });
 
     const nginxEcrRepository = new ecr.Repository(this, 'nginxRepository', {
-      repositoryName: "MagarecoStagingNginx",
+      repositoryName: "magareco-staging-nginx",
       encryption: ecr.RepositoryEncryption.AES_256,
       imageTagMutability: ecr.TagMutability.MUTABLE,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
