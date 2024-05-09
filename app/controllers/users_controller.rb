@@ -11,7 +11,11 @@ class UsersController < ApplicationController
     body = request.body.read
     parsed_body = JSON.parse(body)
 
-    render json: { message: parsed_body['email'] }
+    payload = { user_id: 1 }
+    secret_key = Rails.application.secret_key_base
+    token = JWT.encode(payload, secret_key)
+
+    render json: { token: }
   end
 
   private
