@@ -2,6 +2,7 @@
 import * as cdk from 'aws-cdk-lib';
 import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
+import * as rds from 'aws-cdk-lib/aws-rds';
 import { Construct } from 'constructs';
 
 export class StagingStack extends cdk.Stack {
@@ -27,6 +28,12 @@ export class StagingStack extends cdk.Stack {
           name: 'Private',
           subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS,
         },
+        {
+          // Isolated Subnets for RDS
+          cidrMask: 24,
+          name: 'Isolated',
+          subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+        },
       ],
     });
 
@@ -47,9 +54,32 @@ export class StagingStack extends cdk.Stack {
       autoDeleteImages: true
     });
 
-    // TODO
-    // - RDSの追加
-    // - RDSのセキュリティグループの追加
+    // for EC2
+    const ec2SecurityGroup = new ec2.SecurityGroup(this, 'ec2SecurityGroup', {
+      vpc,
+      description: 'ec2 security group',
+      allowAllOutbound: true
+    });
+
+    // for RDS
+    const rdsSecurityGroup = new ec2.SecurityGroup(this, 'rdsSecurityGroup', {
+      vpc,
+      description: 'rds security group',
+      allowAllOutbound: true
+    });
+    rdsSecurityGroup.addIngressRule(ec2SecurityGroup, ec2.Port.tcp(5432), 'allow ec2 to connect rds');
+
+    // RDSの追加
+    const postgres = new rds.DatabaseInstance(this, "PostgresInstance", {
+      engine: rds.DatabaseInstanceEngine.POSTGRES,
+      instanceType: ec2.InstanceType.of(ec2.InstanceClass.T4G, ec2.InstanceSize.MICRO),
+      vpcSubnets: {
+        subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
+      },
+      securityGroups: [rdsSecurityGroup],
+      vpc,
+    });
+
     // - S3のバケット作成
   }
 }
