@@ -3,6 +3,7 @@ import * as cdk from 'aws-cdk-lib';
 import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as rds from 'aws-cdk-lib/aws-rds';
+import * as s3 from 'aws-cdk-lib/aws-s3';
 import { Construct } from 'constructs';
 
 export class StagingStack extends cdk.Stack {
@@ -80,6 +81,10 @@ export class StagingStack extends cdk.Stack {
       vpc,
     });
 
-    // - S3のバケット作成
+    // S3のバケット作成
+    const bucket = new s3.Bucket(this, 'bucket', {
+      encryption: s3.BucketEncryption.KMS,
+      bucketName: 'magareco'
+    });
   }
 }
