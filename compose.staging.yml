@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  app:
+    build: .
+    command: bundle exec puma -C config/puma.rb
+    environment:
+      - RAILS_ENV=production
+    volumes:
+      - socket-data:opt/app/tmp/sockets
+
+  nginx:
+    build:
+      context: containers/nginx
+    volumes:
+      - socket-data:/opt/app/tmp/sockets
+    ports:
+      - 80:80
+    depends_on:
+      - app
+
+volumes:
+  socket-data:
