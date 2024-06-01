@@ -11,8 +11,7 @@ class ApplicationController < ActionController::API
     secret_key = Rails.application.secret_key_base
     decoded_token = JWT.decode(token, secret_key)
     user_id = decoded_token[0]['user_id']
-    # @current_user = User.find_by(id: user_id)
-    @current_user = 'user'
+    @current_user = User.find_by(id: user_id)
 
   rescue JWT::DecodeError
     @current_user = nil
