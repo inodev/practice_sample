@@ -10,4 +10,9 @@ public/system
 public/assets
 public/packs
 tmp
+
+# Ignore pidfiles, but keep the directory.
+!/tmp/pids/
+!/tmp/pids/.keep
+
 vendor/bundle
