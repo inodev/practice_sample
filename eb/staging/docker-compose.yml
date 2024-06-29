@@ -1,0 +1,24 @@
+version: '3'
+
+services:
+  app:
+    image: 221696344037.dkr.ecr.ap-northeast-1.amazonaws.com/magareco-staging-app
+    command: bash -c "mkdir -p tmp/pids && touch tmp/pids/server.pid && bundle exec rails db:migrate && bundle exec puma -C config/puma.rb"
+    environment:
+      - "TZ=Asia/Tokyo"
+      - "RAILS_ENV=staging"
+    env_file: .env
+    volumes:
+      - socket-data:/opt/app/tmp/sockets
+
+  nginx:
+    image: 221696344037.dkr.ecr.ap-northeast-1.amazonaws.com/magareco-staging-nginx
+    volumes:
+      - socket-data:/opt/app/tmp/sockets
+    ports:
+      - 80:80
+    depends_on:
+      - app
+
+volumes:
+  socket-data:
