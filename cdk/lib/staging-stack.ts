@@ -84,7 +84,7 @@ export class StagingStack extends cdk.Stack {
     // S3のバケット作成
     const bucket = new s3.Bucket(this, 'bucket', {
       encryption: s3.BucketEncryption.KMS,
-      bucketName: 'magareco'
+      bucketName: 'magareco-staging'
     });
   }
 }
